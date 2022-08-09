@@ -18,7 +18,7 @@ function SlideRight() {
       <ArticleContainer>
         <Body>{object.description}</Body>
         <a href={object.source} target="_blank" rel="noreferrer">
-          <Link2 onClick={(e) => e.preventDefault()}>go source</Link2>
+          <Link2>go source</Link2>
         </a>
       </ArticleContainer>
     </Container>

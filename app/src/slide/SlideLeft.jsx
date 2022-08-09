@@ -10,8 +10,6 @@ import { Heading1, SubHead1 } from "../design-system/typography/index.js";
 import ViewImageButton from "../design-system/buttons/ViewImageButtton.jsx";
 import { data } from "@galleria/core";
 import { useSelector } from "react-redux";
-///container do slide left, deve buscar os dados no redux e passar por props.
-///alguns dados serão usados no styled-components
 
 function SlideLeft() {
   const object = useSelector((state) => state.slide.object);

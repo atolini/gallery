@@ -3,6 +3,7 @@ import { Display } from "../design-system/typography/index.js"
 
 export const Container = styled.article`
   width: 100%;
+  margin-bottom: 72px; 
 `;
 
 export const YearContainer = styled(Display)`
