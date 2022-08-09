@@ -1,4 +1,10 @@
-import { startTimer, pauseTimer, resetTimer } from "./features/timer";
+import {
+  pauseTimer,
+  changeTheMode,
+  turnSlideOn,
+  prevOrNext,
+} from "./features/timer";
+import data from "./data/data";
 import { store } from "./features/store";
 
-export { startTimer, pauseTimer, resetTimer, store };
+export { pauseTimer, store, data, changeTheMode, turnSlideOn, prevOrNext };

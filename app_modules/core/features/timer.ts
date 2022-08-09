@@ -2,61 +2,101 @@ import { store } from "@galleria/core";
 import data from "../data/data";
 import { IObject } from "../data/data.types";
 import {
-  slide_increment,
-  slide_reset,
-  slide_turn_on,
-  slide_turn_off,
-  set_object,
+  value_increment,
+  clear_the_timer,
+  timer_turn_on,
+  timer_turn_off,
+  previous_the_object,
+  go_to_slide,
+  turn_slidemode_on,
+  go_to_home,
+  change_the_object,
 } from "./slideSlice";
 
-let interval: any;
+let interval: any = null;
 
 //inicia o timer
-function startTimer() {
-  let value: number = store.getState().slide.value;
-  if (value === 0) {
-    store.dispatch(slide_turn_on());
-    manageTheObject();
-    interval = setInterval(clock, 1000);
-  } else {
-    store.dispatch(slide_turn_on());
-    interval = setInterval(clock, 1000);
-  }
-}
+const startTimer = () => {
+  interval = setInterval(clock, 1000);
+};
 
-//zera o timer
-function resetTimer() {
+//limpa a var interval e zera o estado "value"
+const resetTimer = () => {
   clearInterval(interval);
-  store.dispatch(slide_reset());
-}
-
-//pausa o timer
-function pauseTimer() {
-  clearInterval(interval);
-  store.dispatch(slide_turn_off());
-}
+  store.dispatch(clear_the_timer());
+};
 
 //função que controla que o tempo (máx 20seg) e reinicia a contagem
-function clock() {
+const clock = () => {
   let value: number = store.getState().slide.value;
 
   if (value > 20) {
     resetTimer();
+    store.dispatch(change_the_object());
+    startTimer();
   } else {
-    store.dispatch(slide_increment());
-    manageTheObject();
+    store.dispatch(value_increment());
   }
-}
+};
 
-//função que altera o objeto
-function manageTheObject() {
-  let current: IObject = store.getState().slide.object;
+//funções usadas na UI.
 
-  if (!current || current.id === 14) {
-    store.dispatch(set_object(data[0]));
+//muda o modo da app home ou slide
+const changeTheMode = (slide_param: boolean = false, object_id: number = 0) => {
+  let mode = store.getState().slide.view;
+
+  if (mode === "slide") {
+    store.dispatch(go_to_home());
+    clearInterval(interval);
   } else {
-    store.dispatch(set_object(data[current.id + 1]));
+    store.dispatch(
+      go_to_slide({
+        timer: slide_param ? "on" : "off",
+        object: data[object_id],
+        slide: slide_param ? "on" : "off",
+      })
+    );
+    slide_param ? startTimer() : null;
   }
-}
+};
 
-export { startTimer, resetTimer, pauseTimer, manageTheObject };
+//pausa o timer
+const pauseTimer = () => {
+  let timer = store.getState().slide.timer;
+  let slide = store.getState().slide.slide;
+
+  if (slide === "on") {
+    if (timer === "on") {
+      clearInterval(interval);
+      store.dispatch(timer_turn_off());
+      store.dispatch(turn_slidemode_on());
+    }
+    if (timer === "off") {
+      interval = setInterval(clock, 1000);
+      store.dispatch(timer_turn_on());
+    }
+  }
+};
+
+// liga o modo slide
+const turnSlideOn = () => {
+  store.dispatch(turn_slidemode_on());
+};
+
+//next object
+const prevOrNext = (prev: boolean = false) => {
+  let timer = store.getState().slide.timer;
+
+  prev === true
+    ? store.dispatch(change_the_object())
+    : store.dispatch(previous_the_object());
+
+  if (timer === "on") {
+    resetTimer();
+    startTimer();
+  } else {
+    resetTimer();
+  }
+};
+
+export { pauseTimer, changeTheMode, turnSlideOn, prevOrNext };
